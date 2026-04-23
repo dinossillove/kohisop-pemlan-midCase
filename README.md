@@ -53,8 +53,7 @@ Pastikan Anda sudah menginstal **Java Development Kit (JDK)** versi 8 atau yang 
 
 ### 1. Clone Repository
 Buka terminal atau command prompt, lalu jalankan perintah berikut:
-```bash
-git clone [https://github.com/dinossillove/kohisop-pemlan-midCase.git](https://github.com/dinossillove/kohisop-pemlan-midCase.git)
+git clone https://github.com/dinossillove/kohisop-pemlan-midCase.git
 cd kohisop-pemlan-midCase
 ```
 
