@@ -5,7 +5,7 @@
 KohiSop adalah aplikasi kasir berbasis Command Line Interface (CLI) yang dirancang untuk mengelola pesanan, perhitungan pajak otomatis, hingga transaksi pembayaran multi-mata uang di sebuah kedai kopi. Proyek ini dibuat untuk memenuhi tugas mata kuliah Pemrograman Lanjut dengan menerapkan prinsip-prinsip Pemrograman Berorientasi Objek (OOP) secara mendalam.
 
 ## 🚀 Fitur Utama
-- **Manajemen Menu**: Pemisahan kategori makanan dan minuman dengan logika pajak yang berbeda.
+- *Manajemen Menu*: Pemisahan kategori makanan dan minuman dengan logika pajak yang berbeda.
 - **Sistem Pemesanan**: Validasi kuantitas maksimal dan penanganan pembatalan pesanan secara dinamis.
 - **Multi-Metode Pembayaran**: Mendukung Tunai, QRIS (diskon 5%), dan EMoney (diskon 7% + biaya admin).
 - **Multi-Mata Uang**: Konversi otomatis dari IDR ke USD, MYR, JPY, dan EUR.
