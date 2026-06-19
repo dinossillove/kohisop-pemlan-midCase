@@ -30,7 +30,7 @@ public class ReceiptPrinter {
         System.out.println("---------------------------------------------");
         System.out.printf("TOTAL TAGIHAN AKHIR   : %.2f %s\n", calc.getFinalTotalInCurrency(), curr.getCode());
         System.out.println("=============================================");
-        System.out.println("      Terima kasih dan silakan datang kembali     ");
+        System.out.println("      Terima kasih telah berbelanja di Kohisop!      ");
         System.out.println("=============================================");
     }
 }

@@ -4,7 +4,7 @@ public class InputHandler {
     private Scanner scanner = new Scanner(System.in);
     
     public String readMenuCode() {
-        System.out.print("Masukkan Kode Menu (ketik 'DONE' jika selesai, 'CC' batal): ");
+        System.out.print("Masukkan Kode Menu (ketik 'DONE' jika selesai, 'CC' jika batal): ");
         return scanner.nextLine().trim();
     }
     
@@ -17,9 +17,9 @@ public class InputHandler {
             int qty = 1;
             if (!input.isEmpty()) {
                 try { qty = Integer.parseInt(input); } 
-                catch (NumberFormatException e) { System.out.println("Error: Harap masukkan angka yang valid!"); continue; }
+                catch (NumberFormatException e) { System.out.println("Error, Harap masukkan angka yang valid"); continue; }
             }
-            if (qty < 0 || qty > item.getMaxQty()) { System.out.println("Error: Kuantitas tidak valid!"); continue; }
+            if (qty < 0 || qty > item.getMaxQty()) { System.out.println("Error, Kuantitas tidak valid"); continue; }
             return qty;
         }
     }
@@ -31,7 +31,7 @@ public class InputHandler {
             if (ch.equals("1")) return new Tunai();
             if (ch.equals("2")) return new QRIS();
             if (ch.equals("3")) return new EMoney();
-            System.out.println("Pilihan tidak valid!");
+            System.out.println("Pilihan tidak valid");
         }
     }
     
@@ -44,7 +44,7 @@ public class InputHandler {
             if (mu.equals("3")) return new JPY();
             if (mu.equals("4")) return new MYR();
             if (mu.equals("5")) return new EUR();
-            System.out.println("Pilihan tidak valid!");
+            System.out.println("Pilihan tidak valid");
         }
     }
 }
