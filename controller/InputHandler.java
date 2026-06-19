@@ -1,4 +1,17 @@
+package controller;
+
 import java.util.Scanner;
+import model.Currency;
+import model.EMoney;
+import model.EUR;
+import model.IDR;
+import model.JPY;
+import model.MYR;
+import model.MenuItem;
+import model.PaymentChannel;
+import model.QRIS;
+import model.Tunai;
+import model.USD;
 
 public class InputHandler {
     private Scanner scanner = new Scanner(System.in);

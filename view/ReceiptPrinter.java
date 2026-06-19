@@ -1,3 +1,10 @@
+package view;
+
+import controller.PaymentCalculator;
+import model.Currency;
+import model.Order;
+import model.PaymentChannel;
+
 public class ReceiptPrinter {
     private PaymentCalculator calc;
     public ReceiptPrinter(PaymentCalculator calc) { this.calc = calc; }

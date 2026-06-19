@@ -1,3 +1,5 @@
+package model;
+
 public class Minuman extends MenuItem {
     public Minuman(String kode, String nama, double harga, String kategori) {
         super(kode, nama, harga, kategori);

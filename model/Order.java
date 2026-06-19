@@ -1,3 +1,5 @@
+package model;
+
 public class Order {
     private MenuItem menuItem;
     private int quantity;

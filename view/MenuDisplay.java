@@ -1,4 +1,10 @@
+package view;
+
 import java.util.List;
+import model.Makanan;
+import model.MenuItem;
+import model.Minuman;
+import model.Order;
 
 public class MenuDisplay {
     private List<MenuItem> items;
@@ -16,7 +22,7 @@ public class MenuDisplay {
         for (MenuItem item : items) if (item.getKode().equalsIgnoreCase(code)) return item;
         return null;
     }
-    public void showOrderTable(List<Order> drinks, List<Order> foods) {
+    public void showOrderTable(java.util.List<Order> drinks, java.util.List<Order> foods) {
         System.out.println("\n--- Pesanan Saat Ini ---");
         for (Order o : drinks) System.out.printf("%-30s x %d\n", o.getMenuItem().getNama(), o.getQuantity());
         for (Order o : foods) System.out.printf("%-30s x %d\n", o.getMenuItem().getNama(), o.getQuantity());

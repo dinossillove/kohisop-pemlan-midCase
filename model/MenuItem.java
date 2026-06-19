@@ -1,3 +1,5 @@
+package model;
+
 public abstract class MenuItem {
     protected String kode, nama, kategori;
     protected double harga;

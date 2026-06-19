@@ -1,6 +1,17 @@
+package controller;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import model.Currency;
+import model.Makanan;
+import model.MenuItem;
+import model.Minuman;
+import model.Order;
+import model.PaymentChannel;
+import view.MenuDisplay;
+import view.OrderDisplay;
+import view.ReceiptPrinter;
 
 public class Main {
     private OrderDisplay orderDisplay;

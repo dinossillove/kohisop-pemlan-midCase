@@ -1,3 +1,5 @@
+package model;
+
 public class EMoney implements PaymentChannel {
     public String getName() { return "eMoney"; }
     public double getDiscount() { return 0.07; }

@@ -1,3 +1,5 @@
+package model;
+
 public class Tunai implements PaymentChannel {
     public String getName() { return "Tunai"; }
     public double getDiscount() { return 0.0; }

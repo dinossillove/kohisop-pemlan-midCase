@@ -1,3 +1,10 @@
+package controller;
+
+import model.Currency;
+import model.Order;
+import model.PaymentChannel;
+import view.OrderDisplay;
+
 public class PaymentCalculator {
     private OrderDisplay order;
     private PaymentChannel channel;
