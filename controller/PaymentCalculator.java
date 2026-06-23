@@ -1,6 +1,7 @@
 package controller;
 
 import model.Currency;
+import model.IDR;
 import model.Membership;
 import model.Order;
 import model.PaymentChannel;
@@ -41,9 +42,17 @@ public class PaymentCalculator {
     }
     
     public double getTaxIDR() {
+        if (membership != null &&
+            membership.hasBonus()) {
+            return 0;
+        }
         double tax = 0;
-        for (Order o : order.getDrinks()) tax += o.getTotalTax();
-        for (Order o : order.getFoods()) tax += o.getTotalTax();
+        for (Order o : order.getDrinks()) {
+            tax += o.getTotalTax();
+        }
+        for (Order o : order.getFoods()) {
+            tax += o.getTotalTax();
+        }
         return tax;
     }
 
@@ -60,13 +69,22 @@ public class PaymentCalculator {
     }
 
     public int getPointsRedeemed() {
-        if (membership == null) {
-            return 0;
-        }
-        if (redeemedPoints == null) {
-            redeemedPoints = membership.redeemPoints(getFinalTotalIDRBeforePoints());
-        }
-        return redeemedPoints;
+    if (membership == null) {
+        return 0;
+    }
+
+    // poin hanya untuk IDR
+    if (!(currency instanceof IDR)) {
+        return 0;
+    }
+
+    if (redeemedPoints == null) {
+        redeemedPoints =
+                membership.redeemPoints(
+                        getFinalTotalIDRBeforePoints());
+    }
+
+    return redeemedPoints;
     }
 
     public double getPointsRedemptionValueIDR() {

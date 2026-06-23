@@ -120,4 +120,8 @@ public class Membership {
     public int getPoin() {
         return poin;
     }
+
+    public boolean hasBonus() {
+    return kodeMember.contains("A");
+    }
 }
