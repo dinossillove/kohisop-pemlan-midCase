@@ -60,4 +60,23 @@ public class InputHandler {
             System.out.println("Pilihan tidak valid");
         }
     }
+    
+    public String readCustomerName() {
+        while (true) {
+            System.out.print("Masukkan Nama Pelanggan: ");
+            String nama = scanner.nextLine().trim();
+            if (!nama.isEmpty()) return nama;
+            System.out.println("Nama tidak boleh kosong.");
+        }
+    }
+
+    public boolean readContinue() {
+        while (true) {
+            System.out.print("Layani pelanggan lain? (Y/N): ");
+            String input = scanner.nextLine().trim();
+            if (input.equalsIgnoreCase("Y")) return true;
+            if (input.equalsIgnoreCase("N")) return false;
+            System.out.println("Pilihan tidak valid.");
+        }
+    }
 }

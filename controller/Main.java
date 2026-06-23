@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import model.Currency;
 import model.Makanan;
+import model.Membership;
 import model.MenuItem;
 import model.Minuman;
 import model.Order;
@@ -17,10 +18,12 @@ public class Main {
     private OrderDisplay orderDisplay;
     private InputHandler handler;
     private MenuDisplay menuDisplay;
+    private KitchenProcessor kitchenProcessor;
 
     public Main() {
         orderDisplay = new OrderDisplay();
         handler = new InputHandler();
+        kitchenProcessor = new KitchenProcessor();
         
         List<MenuItem> items = Arrays.asList(
                 new Minuman("A1", "Caffe Latte", 46, "Coffee"),
@@ -46,54 +49,79 @@ public class Main {
     }
 
     public void runOrderFlow() {
-        menuDisplay.showDrinkMenu();
-        System.out.println();
-        menuDisplay.showFoodMenu();
-        
-        List<MenuItem> selectedItems = new ArrayList<>();
-        int drinkCount = 0, foodCount = 0;
-
         while (true) {
-            String code = handler.readMenuCode();
-            if (code.equalsIgnoreCase("CC")) { System.out.println("Batal. Program Berhenti."); return; }
-            if (code.equalsIgnoreCase("DONE")) break;
-
-            MenuItem item = menuDisplay.getItemByCode(code);
-            if (item == null) { System.out.println("Error: Kode tidak valid."); continue; }
+            menuDisplay.showDrinkMenu();
+            System.out.println();
+            menuDisplay.showFoodMenu();
             
-            if (item instanceof Minuman) {
-                if (drinkCount < 5) { selectedItems.add(item); drinkCount++; }
-                else { System.out.println("Maksimal 5 jenis minuman tercapai!"); }
-            } else if (item instanceof Makanan) {
-                if (foodCount < 5) { selectedItems.add(item); foodCount++; }
-                else { System.out.println("Maksimal 5 jenis makanan tercapai!"); }
+            orderDisplay.clear();
+            List<MenuItem> selectedItems = new ArrayList<>();
+            int drinkCount = 0, foodCount = 0;
+
+            while (true) {
+                String code = handler.readMenuCode();
+                if (code.equalsIgnoreCase("CC")) { System.out.println("Batal. Program Berhenti."); return; }
+                if (code.equalsIgnoreCase("DONE")) break;
+
+                MenuItem item = menuDisplay.getItemByCode(code);
+                if (item == null) { System.out.println("Error: Kode tidak valid."); continue; }
+                
+                if (item instanceof Minuman) {
+                    if (drinkCount < 5) { selectedItems.add(item); drinkCount++; }
+                    else { System.out.println("Maksimal 5 jenis minuman tercapai!"); }
+                } else if (item instanceof Makanan) {
+                    if (foodCount < 5) { selectedItems.add(item); foodCount++; }
+                    else { System.out.println("Maksimal 5 jenis makanan tercapai!"); }
+                }
+            }
+
+            if (selectedItems.isEmpty()) {
+                System.out.println("Tidak ada pesanan. Program Berhenti.");
+                return;
+            }
+
+            System.out.println("\n-- Tentukan Kuantitas (Enter = 1, 'S'/'0' = Batal, 'CC' = Batal Semua) --");
+            for (MenuItem item : selectedItems) {
+                int qty = handler.readQuantity(item);
+                if (qty == -2) return;
+                if (qty > 0) {
+                    orderDisplay.addItem(new Order(item, qty));
+                    menuDisplay.showOrderTable(orderDisplay.getDrinks(), orderDisplay.getFoods());
+                }
+            }
+
+            PaymentChannel channel = handler.readPaymentChannel();
+            Currency currency = handler.readCurrency();
+            String customerName = handler.readCustomerName();
+            
+            Membership member = Membership.getOrCreateMember(customerName);
+            PaymentCalculator calc = new PaymentCalculator(orderDisplay, channel, currency, member);
+            int pointsUsed = calc.getPointsRedeemed();
+            member.addPointsFromTransaction(calc.getFinalTotalIDRBeforePoints());
+            ReceiptPrinter printer = new ReceiptPrinter(calc, member, pointsUsed);
+            
+            printer.printHeader();
+            printer.printOrderLines();
+            printer.printTotals();
+
+            kitchenProcessor.submitOrder(orderDisplay.getDrinks(), orderDisplay.getFoods());
+            orderDisplay.clear();
+
+            if (kitchenProcessor.isReadyToProcess()) {
+                kitchenProcessor.processOrders();
+            } else {
+                System.out.printf("Jumlah pelanggan yang dilayani: %d/3. Menunggu batch berikutnya.\n", kitchenProcessor.getCustomerCount());
+            }
+
+            if (!handler.readContinue()) {
+                if (kitchenProcessor.getCustomerCount() > 0) {
+                    System.out.println("\nMenjalankan proses dapur untuk sisa pesanan pelanggan...");
+                    kitchenProcessor.processOrders();
+                }
+                System.out.println("Program selesai.");
+                return;
             }
         }
-
-        if (selectedItems.isEmpty()) {
-            System.out.println("Tidak ada pesanan. Program Berhenti.");
-            return;
-        }
-
-        System.out.println("\n-- Tentukan Kuantitas (Enter = 1, 'S'/'0' = Batal, 'CC' = Batal Semua) --");
-        for (MenuItem item : selectedItems) {
-            int qty = handler.readQuantity(item);
-            if (qty == -2) return;
-            if (qty > 0) {
-                orderDisplay.addItem(new Order(item, qty));
-                menuDisplay.showOrderTable(orderDisplay.getDrinks(), orderDisplay.getFoods());
-            }
-        }
-
-        PaymentChannel channel = handler.readPaymentChannel();
-        Currency currency = handler.readCurrency();
-        
-        PaymentCalculator calc = new PaymentCalculator(orderDisplay, channel, currency);
-        ReceiptPrinter printer = new ReceiptPrinter(calc);
-        
-        printer.printHeader();
-        printer.printOrderLines();
-        printer.printTotals();
     }
 
     public static void main(String[] args) {

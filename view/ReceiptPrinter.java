@@ -2,12 +2,24 @@ package view;
 
 import controller.PaymentCalculator;
 import model.Currency;
+import model.Membership;
 import model.Order;
 import model.PaymentChannel;
 
 public class ReceiptPrinter {
     private PaymentCalculator calc;
-    public ReceiptPrinter(PaymentCalculator calc) { this.calc = calc; }
+    private Membership membership;
+    private int pointsUsed;
+
+    public ReceiptPrinter(PaymentCalculator calc) {
+        this(calc, null, 0);
+    }
+
+    public ReceiptPrinter(PaymentCalculator calc, Membership membership, int pointsUsed) {
+        this.calc = calc;
+        this.membership = membership;
+        this.pointsUsed = pointsUsed;
+    }
     
     public void printHeader() {
         System.out.println("\n=============================================");
@@ -36,6 +48,15 @@ public class ReceiptPrinter {
         if (ch.getAdminFee() > 0) System.out.printf("Biaya Admin           : +%.2f %s\n", curr.convertFromIDR(ch.getAdminFee()), curr.getCode());
         System.out.println("---------------------------------------------");
         System.out.printf("TOTAL TAGIHAN AKHIR   : %.2f %s\n", calc.getFinalTotalInCurrency(), curr.getCode());
+        if (membership != null) {
+            System.out.println("=============================================");
+            System.out.println("Membership berhasil disimpan:");
+            System.out.printf("Kode Member          : %s\n", membership.getKodeMember());
+            System.out.printf("Nama Member          : %s\n", membership.getNamaMember());
+            System.out.printf("Poin Digunakan       : %d\n", pointsUsed);
+            System.out.printf("Nilai Poin           : %.2f IDR\n", pointsUsed * 2.0);
+            System.out.printf("Sisa Poin            : %d\n", membership.getPoin());
+        }
         System.out.println("=============================================");
         System.out.println("      Terima kasih telah berbelanja di Kohisop!      ");
         System.out.println("=============================================");

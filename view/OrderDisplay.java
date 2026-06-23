@@ -15,4 +15,8 @@ public class OrderDisplay {
     }
     public List<Order> getDrinks() { return drinks; }
     public List<Order> getFoods() { return foods; }
+    public void clear() {
+        drinks.clear();
+        foods.clear();
+    }
 }
