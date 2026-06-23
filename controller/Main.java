@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import model.Currency;
+import model.EMoney;
 import model.Makanan;
 import model.Membership;
 import model.MenuItem;
 import model.Minuman;
 import model.Order;
 import model.PaymentChannel;
+import model.QRIS;
 import view.MenuDisplay;
 import view.OrderDisplay;
 import view.ReceiptPrinter;
@@ -91,6 +93,27 @@ public class Main {
             }
 
             PaymentChannel channel = handler.readPaymentChannel();
+            double totalIDR = 0;
+            for (Order o : orderDisplay.getDrinks()) {
+                totalIDR += o.getSubtotal();
+            }
+            for (Order o : orderDisplay.getFoods()) {
+                totalIDR += o.getSubtotal();
+            }
+            if (channel instanceof QRIS) {
+                QRIS qris = (QRIS) channel;
+                if (totalIDR > qris.getSaldo()) {
+                    System.out.println("Saldo QRIS tidak mencukupi.");
+                    continue;
+                }
+            }
+            if (channel instanceof EMoney) {
+                EMoney emoney = (EMoney) channel;
+                if (totalIDR > emoney.getSaldo()) {
+                    System.out.println("Saldo eMoney tidak mencukupi.");
+                    continue;
+                }
+            }
             Currency currency = handler.readCurrency();
             String customerName = handler.readCustomerName();
             
