@@ -55,21 +55,15 @@ import model.QRIS;
 import model.Tunai;
 import model.USD;
 
-/**
- * KohiSop II – Single-Frame Swing GUI
- * Place this file in the "view" package of your NetBeans project.
- * All model / controller classes must be on the build-path as-is.
- */
 public class KohiSopGUI extends JFrame {
 
-    // ─── Palette ──────────────────────────────────────────────────────────────
-    private static final Color C_BG          = new Color(0x1C1917);  // near-black espresso
-    private static final Color C_PANEL       = new Color(0x292524);  // dark roast
-    private static final Color C_CARD        = new Color(0x3B3330);  // medium roast
-    private static final Color C_ACCENT      = new Color(0xC8854A);  // warm amber / caramel
-    private static final Color C_ACCENT2     = new Color(0x9BB580);  // sage green
-    private static final Color C_TEXT        = new Color(0xF5F0EB);  // cream
-    private static final Color C_TEXT_DIM    = new Color(0xA8998E);  // muted latte
+    private static final Color C_BG          = new Color(0x1C1917);
+    private static final Color C_PANEL       = new Color(0x292524);
+    private static final Color C_CARD        = new Color(0x3B3330);
+    private static final Color C_ACCENT      = new Color(0xC8854A);
+    private static final Color C_ACCENT2     = new Color(0x9BB580);
+    private static final Color C_TEXT        = new Color(0xF5F0EB);
+    private static final Color C_TEXT_DIM    = new Color(0xA8998E);
     private static final Color C_BORDER      = new Color(0x4A4340);
     private static final Color C_TABLE_HEAD  = new Color(0xC8854A);
     private static final Color C_TABLE_ALT   = new Color(0x322E2C);
@@ -82,7 +76,6 @@ public class KohiSopGUI extends JFrame {
     private static final Font  F_MONO        = new Font("Monospaced", Font.PLAIN, 12);
     private static final Font  F_SMALL       = new Font("SansSerif", Font.PLAIN, 11);
 
-    // ─── Menu data ────────────────────────────────────────────────────────────
     private static final List<MenuItem> MENU_ITEMS = Arrays.asList(
         new Minuman("A1","Caffe Latte",46,"Coffee"),
         new Minuman("A2","Cappuccino",46,"Coffee"),
@@ -104,12 +97,10 @@ public class KohiSopGUI extends JFrame {
         new Makanan("S4","Tahu Bakso Extra Telur",28,"Snack")
     );
 
-    // ─── State ────────────────────────────────────────────────────────────────
     private final OrderDisplay orderDisplay = new OrderDisplay();
     private final KitchenProcessor kitchen  = new KitchenProcessor();
     private Membership currentMember        = null;
 
-    // ─── Widgets we need to reference across methods ──────────────────────────
     private JTable menuDrinkTable, menuFoodTable, cartTable;
     private DefaultTableModel cartModel;
     private JTextField txtCode, txtQty, txtCustomerName, txtMemberCode,
@@ -119,20 +110,17 @@ public class KohiSopGUI extends JFrame {
     private JLabel lblStatus, lblCartDrinkCount, lblCartFoodCount;
     private JButton btnAdd, btnCancelOrder, btnCheckout;
 
-    // ─── Constructor ──────────────────────────────────────────────────────────
     public KohiSopGUI() {
         setTitle("KohiSop II – Sistem Pembayaran");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setPreferredSize(new Dimension(1340, 820));
         getContentPane().setBackground(C_BG);
-
         buildUI();
         pack();
         setLocationRelativeTo(null);
         setMinimumSize(new Dimension(1100, 700));
     }
 
-    // ─── UI Assembly ─────────────────────────────────────────────────────────
     private void buildUI() {
         setLayout(new BorderLayout(0, 0));
         add(buildTopBar(),    BorderLayout.NORTH);
@@ -140,7 +128,6 @@ public class KohiSopGUI extends JFrame {
         add(buildStatusBar(), BorderLayout.SOUTH);
     }
 
-    /** Branded top header bar */
     private JPanel buildTopBar() {
         JPanel bar = new JPanel(new BorderLayout(16, 0));
         bar.setBackground(C_PANEL);
@@ -163,17 +150,13 @@ public class KohiSopGUI extends JFrame {
         return bar;
     }
 
-    /** Three-column layout: Menu | Order + Membership + Payment | Receipt + Kitchen */
     private JComponent buildMainArea() {
-        // Left column – Menu catalogue
         JPanel leftCol = buildMenuPanel();
         leftCol.setPreferredSize(new Dimension(340, 0));
 
-        // Centre column – Order, Membership, Payment
         JPanel centreCol = buildCentrePanel();
         centreCol.setPreferredSize(new Dimension(440, 0));
 
-        // Right column – Receipt & Kitchen queue
         JPanel rightCol = buildRightPanel();
 
         JSplitPane split1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftCol, centreCol);
@@ -189,7 +172,6 @@ public class KohiSopGUI extends JFrame {
         return split2;
     }
 
-    // ─── Left column: Menu display ───────────────────────────────────────────
     private JPanel buildMenuPanel() {
         JPanel panel = panel(new BorderLayout(0, 8));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 6));
@@ -212,7 +194,6 @@ public class KohiSopGUI extends JFrame {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
 
-        // Sort: drinks by code alpha, foods by code alpha (already grouped)
         List<MenuItem> filtered = new ArrayList<>();
         for (MenuItem mi : MENU_ITEMS) {
             if (food == (mi instanceof Makanan)) filtered.add(mi);
@@ -231,7 +212,6 @@ public class KohiSopGUI extends JFrame {
 
         if (!food) menuDrinkTable = tbl; else menuFoodTable = tbl;
 
-        // Double-click fills code input
         tbl.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -249,7 +229,6 @@ public class KohiSopGUI extends JFrame {
         return scrollPane(tbl);
     }
 
-    // ─── Centre column ───────────────────────────────────────────────────────
     private JPanel buildCentrePanel() {
         JPanel panel = panel(new BorderLayout(0, 8));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 6, 10, 6));
@@ -267,7 +246,6 @@ public class KohiSopGUI extends JFrame {
         return panel;
     }
 
-    /** Code + Qty input and action buttons */
     private JPanel buildOrderInputPanel() {
         JPanel card = card();
         card.setLayout(new GridBagLayout());
@@ -275,13 +253,11 @@ public class KohiSopGUI extends JFrame {
         g.insets = new Insets(4, 6, 4, 6);
         g.fill   = GridBagConstraints.HORIZONTAL;
 
-        // Section title
         g.gridx = 0; g.gridy = 0; g.gridwidth = 4;
         card.add(sectionLabel("INPUT PESANAN"), g);
 
         g.gridwidth = 1; g.gridy = 1;
 
-        // Kode
         g.gridx = 0; g.weightx = 0;
         card.add(label("Kode Item:"), g);
         g.gridx = 1; g.weightx = 1;
@@ -289,7 +265,6 @@ public class KohiSopGUI extends JFrame {
         txtCode.setToolTipText("Double-klik menu untuk isi otomatis, atau ketik kode lalu Enter");
         card.add(txtCode, g);
 
-        // Qty
         g.gridx = 2; g.weightx = 0;
         card.add(label("Qty:"), g);
         g.gridx = 3; g.weightx = 0.4;
@@ -299,7 +274,6 @@ public class KohiSopGUI extends JFrame {
         txtQty.setToolTipText("0 / S = skip item | Minuman maks 3 | Makanan maks 2");
         card.add(txtQty, g);
 
-        // Buttons
         g.gridy = 2; g.gridx = 0; g.gridwidth = 2; g.weightx = 1;
         btnAdd = accentButton("+ Tambah ke Pesanan");
         card.add(btnAdd, g);
@@ -308,7 +282,6 @@ public class KohiSopGUI extends JFrame {
         btnCancelOrder = dangerButton("✕  Batal (CC)");
         card.add(btnCancelOrder, g);
 
-        // Wire actions
         txtCode.addActionListener(e -> txtQty.requestFocus());
         txtQty.addActionListener(e -> handleAddItem());
         btnAdd.addActionListener(e -> handleAddItem());
@@ -317,7 +290,6 @@ public class KohiSopGUI extends JFrame {
         return card;
     }
 
-    /** Cart (active order) JTable */
     private JPanel buildCartPanel() {
         JPanel card = card();
         card.setLayout(new BorderLayout(0, 6));
@@ -348,7 +320,6 @@ public class KohiSopGUI extends JFrame {
 
         card.add(scrollPane(cartTable), BorderLayout.CENTER);
 
-        // Remove selected row
         JButton btnRemove = subtleButton("Hapus Item Terpilih");
         btnRemove.addActionListener(e -> handleRemoveCartItem());
         card.add(btnRemove, BorderLayout.SOUTH);
@@ -356,7 +327,6 @@ public class KohiSopGUI extends JFrame {
         return card;
     }
 
-    /** Membership + Payment + Currency + Checkout */
     private JPanel buildBottomCentrePanel() {
         JPanel panel = panel(new BorderLayout(0, 8));
         panel.add(buildMembershipPanel(), BorderLayout.NORTH);
@@ -454,7 +424,6 @@ public class KohiSopGUI extends JFrame {
         return card;
     }
 
-    // ─── Right column: Receipt + Kitchen ─────────────────────────────────────
     private JPanel buildRightPanel() {
         JPanel panel = panel(new BorderLayout(0, 8));
         panel.setBorder(BorderFactory.createEmptyBorder(10, 6, 10, 10));
@@ -565,7 +534,6 @@ public class KohiSopGUI extends JFrame {
             return;
         }
 
-        // Determine current drink/food counts in cart
         int drinkCount = orderDisplay.getDrinks().size();
         int foodCount  = orderDisplay.getFoods().size();
 
@@ -576,7 +544,6 @@ public class KohiSopGUI extends JFrame {
             setStatus("Maksimal 5 jenis makanan per pesanan sudah tercapai.", C_ERR); return;
         }
 
-        // Check duplicate
         for (Order o : orderDisplay.getDrinks()) {
             if (o.getMenuItem().getKode().equalsIgnoreCase(code)) {
                 setStatus("Item '" + item.getNama() + "' sudah ada dalam pesanan.", C_ERR); return;
@@ -588,7 +555,6 @@ public class KohiSopGUI extends JFrame {
             }
         }
 
-        // Parse quantity
         String qtyStr = txtQty.getText().trim().toUpperCase();
         if (qtyStr.equals("S") || qtyStr.equals("0")) {
             setStatus("Item dilewati (skip).", C_TEXT_DIM);
@@ -612,8 +578,7 @@ public class KohiSopGUI extends JFrame {
             txtCode.setText(""); txtQty.setText("1"); txtCode.requestFocus(); return;
         }
 
-        Order order = new Order(item, qty);
-        orderDisplay.addItem(order);
+        orderDisplay.addItem(new Order(item, qty));
         refreshCartTable();
         txtCode.setText(""); txtQty.setText("1"); txtCode.requestFocus();
         setStatus("Ditambahkan: " + item.getNama() + " x" + qty, C_SUCCESS);
@@ -624,7 +589,6 @@ public class KohiSopGUI extends JFrame {
         if (row < 0) { setStatus("Pilih item di tabel pesanan terlebih dahulu.", C_TEXT_DIM); return; }
 
         String code = cartModel.getValueAt(row, 0).toString();
-        // Remove from orderDisplay
         orderDisplay.getDrinks().removeIf(o -> o.getMenuItem().getKode().equals(code));
         orderDisplay.getFoods().removeIf(o -> o.getMenuItem().getKode().equals(code));
         refreshCartTable();
@@ -662,33 +626,31 @@ public class KohiSopGUI extends JFrame {
     }
 
     private void handleCheckout() {
-        // Validate cart
         if (orderDisplay.getDrinks().isEmpty() && orderDisplay.getFoods().isEmpty()) {
             setStatus("Pesanan kosong. Tambah item sebelum checkout.", C_ERR); return;
         }
-        // Validate customer name
         String name = txtCustomerName.getText().trim();
         if (name.isEmpty()) {
             setStatus("Masukkan nama pelanggan untuk membership.", C_ERR);
             txtCustomerName.requestFocus(); return;
         }
 
-        // Resolve member (auto-create if not looked up)
         if (currentMember == null) handleMemberLookup();
 
-        // Payment channel
         PaymentChannel channel = resolveChannel(cmbPayment.getSelectedIndex());
         Currency currency      = resolveCurrency(cmbCurrency.getSelectedItem().toString());
 
-        // Tax exemption: member with 'A' in code
         boolean taxExempt = currentMember != null
             && currentMember.getKodeMember().contains("A");
 
-        // Build calculator
         OrderDisplay calcOrder = buildTaxAdjustedOrder(taxExempt);
         PaymentCalculator calc = new PaymentCalculator(
             calcOrder, channel, currency, currentMember);
 
+        // --- PERBAIKAN: simpan poin SEBELUM transaksi ---
+        int pointsBefore = currentMember.getPoin();
+
+        // Redeem poin (hanya untuk IDR)
         int pointsUsed = 0;
         boolean usePoints = currentMember != null
             && currentMember.getPoin() > 0
@@ -697,32 +659,30 @@ public class KohiSopGUI extends JFrame {
             pointsUsed = calc.getPointsRedeemed();
         }
 
-        // Points earned
         double finalIDR = calc.getFinalTotalIDRBeforePoints();
-        int newPoints   = currentMember.getEarnedPointsForTransaction(finalIDR);
-        boolean doubled = currentMember.getKodeMember().contains("A");
-        if (doubled) newPoints *= 2;
+
+        // --- PERBAIKAN: getEarnedPointsForTransaction sudah include penggandaan "A",
+        //     jangan kalikan lagi di sini ---
+        int pointsEarned = currentMember.getEarnedPointsForTransaction(finalIDR);
+        boolean doubled  = currentMember.getKodeMember().contains("A");
+
+        // Tambahkan poin ke member (sudah otomatis ganda jika kode ada "A")
         currentMember.addPointsFromTransaction(finalIDR);
 
-        // Print receipt
         String receipt = buildReceipt(calc, calcOrder, taxExempt,
-            pointsUsed, newPoints, doubled, currency, channel);
+            pointsBefore, pointsUsed, pointsEarned, doubled, currency, channel);
         receiptArea.setText(receipt);
         receiptArea.setCaretPosition(0);
 
-        // Submit to kitchen
         List<Order> drinksCopy = new ArrayList<>(orderDisplay.getDrinks());
         List<Order> foodsCopy  = new ArrayList<>(orderDisplay.getFoods());
         kitchen.submitOrder(drinksCopy, foodsCopy);
 
-        // Update member display
         txtMemberPoints.setText(String.valueOf(currentMember.getPoin()));
 
-        // Kitchen output
         String kitchenOutput = buildKitchenOutput();
         kitchenArea.setText(kitchenOutput);
 
-        // Clear cart for next customer
         orderDisplay.clear();
         refreshCartTable();
         currentMember = null;
@@ -734,8 +694,9 @@ public class KohiSopGUI extends JFrame {
     }
 
     // ─── Receipt Builder ─────────────────────────────────────────────────────
+    // PERBAIKAN: parameter pointsBefore ditambahkan, tidak lagi dihitung dari getPoin()-newPoints
     private String buildReceipt(PaymentCalculator calc, OrderDisplay od,
-            boolean taxExempt, int pointsUsed, int newPoints,
+            boolean taxExempt, int pointsBefore, int pointsUsed, int pointsEarned,
             boolean doubled, Currency currency, PaymentChannel channel) {
 
         StringBuilder sb = new StringBuilder();
@@ -753,7 +714,7 @@ public class KohiSopGUI extends JFrame {
         if (taxExempt) sb.append("⚡ BEBAS PAJAK (Kode member mengandung 'A')\n");
         sb.append(dash).append("\n");
 
-        // Food items
+        // Makanan dulu
         if (!od.getFoods().isEmpty()) {
             sb.append(String.format("%-5s %-26s %6s %4s %10s  %8s\n",
                 "Kode","Makanan","Harga","Qty","Subtotal","Pajak"));
@@ -771,7 +732,7 @@ public class KohiSopGUI extends JFrame {
             sb.append("\n");
         }
 
-        // Drink items
+        // Minuman
         if (!od.getDrinks().isEmpty()) {
             sb.append(String.format("%-5s %-26s %6s %4s %10s  %8s\n",
                 "Kode","Minuman","Harga","Qty","Subtotal","Pajak"));
@@ -791,23 +752,22 @@ public class KohiSopGUI extends JFrame {
 
         sb.append(dash).append("\n");
 
-        double rawIDR      = calc.getRawTotalIDR();
-        double taxIDR      = taxExempt ? 0 : calc.getTaxIDR();
+        double rawIDR       = calc.getRawTotalIDR();
+        double taxIDR       = taxExempt ? 0 : calc.getTaxIDR();
         double totalWithTax = rawIDR + taxIDR;
-        double discAmt     = totalWithTax * channel.getDiscount();
-        double adminFee    = channel.getAdminFee();
+        double discAmt      = totalWithTax * channel.getDiscount();
+        double adminFee     = channel.getAdminFee();
         double beforePoints = totalWithTax - discAmt + adminFee;
-        double pointsVal   = pointsUsed * 2.0;
-        double finalIDR    = Math.max(0, beforePoints - pointsVal);
+        double pointsVal    = pointsUsed * 2.0;
+        double finalIDR     = Math.max(0, beforePoints - pointsVal);
 
         sb.append(String.format("%-36s %13.2f %s\n",
             "Total (sebelum pajak):", currency.convertFromIDR(rawIDR), currency.getCode()));
         sb.append(String.format("%-36s %13.2f %s\n",
-            "Total Pajak" + (taxExempt ? " (DIBEBASKAN)" : ":"),
+            "Total Pajak" + (taxExempt ? " (DIBEBASKAN):" : ":"),
             currency.convertFromIDR(taxIDR), currency.getCode()));
         sb.append(String.format("%-36s %13.2f %s\n",
             "Total + Pajak:", currency.convertFromIDR(totalWithTax), currency.getCode()));
-
         sb.append(String.format("%-36s %13.2f %s\n",
             "Diskon " + channel.getName()
                 + String.format(" (%.0f%%):", channel.getDiscount() * 100),
@@ -822,17 +782,17 @@ public class KohiSopGUI extends JFrame {
         sb.append(String.format("%-36s %13.2f %s\n",
             "Total tagihan (sebelum poin):", currency.convertFromIDR(beforePoints), currency.getCode()));
 
-        // Membership & points
+        // Membership & poin — pakai pointsBefore yang disimpan sebelum transaksi
         if (currentMember != null) {
             sb.append(dash).append("\n");
             sb.append(String.format("%-36s %13d poin\n",
-                "Poin sebelum transaksi:", currentMember.getPoin() - newPoints));
+                "Poin sebelum transaksi:", pointsBefore));
             if (pointsUsed > 0) {
                 sb.append(String.format("%-36s %13d poin = %.0f IDR\n",
                     "Poin digunakan:", pointsUsed, pointsVal));
             }
             sb.append(String.format("%-36s %13d poin%s\n",
-                "Poin diperoleh:", newPoints, doubled ? " (×2 bonus!)" : ""));
+                "Poin diperoleh:", pointsEarned, doubled ? " (x2 bonus kode A!)" : ""));
             sb.append(String.format("%-36s %13d poin\n",
                 "Poin sesudah transaksi:", currentMember.getPoin()));
         }
@@ -846,19 +806,15 @@ public class KohiSopGUI extends JFrame {
         return sb.toString();
     }
 
-    // ─── Kitchen output ───────────────────────────────────────────────────────
     private String buildKitchenOutput() {
         StringBuilder sb = new StringBuilder();
         sb.append("═".repeat(44)).append("\n");
         sb.append("    ⚙️  ANTRIAN TIM DAPUR – KohiSop II\n");
         sb.append("═".repeat(44)).append("\n");
-        sb.append(String.format("  Pelanggan dilayani: %d / 3\n",
-            kitchen.getCustomerCount()));
+        sb.append(String.format("  Pelanggan dilayani: %d / 3\n", kitchen.getCustomerCount()));
         sb.append("\n");
 
         if (kitchen.isReadyToProcess()) {
-            // We simulate processing output (non-destructive): capture via reflection on internal state
-            // Instead, display a message and call processOrders capturing System.out
             java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
             java.io.PrintStream old = System.out;
             System.setOut(new java.io.PrintStream(baos));
@@ -879,12 +835,8 @@ public class KohiSopGUI extends JFrame {
         return sb.toString();
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
-
-    /** Build a tax-adjusted OrderDisplay where taxExempt zeroes out taxes via wrappers */
     private OrderDisplay buildTaxAdjustedOrder(boolean taxExempt) {
         if (!taxExempt) return orderDisplay;
-        // Wrap with tax-free items
         OrderDisplay od = new OrderDisplay();
         for (Order o : orderDisplay.getDrinks()) {
             od.addItem(new Order(wrapTaxFree(o.getMenuItem()), o.getQuantity()));
@@ -911,7 +863,7 @@ public class KohiSopGUI extends JFrame {
 
     private void refreshCartTable() {
         cartModel.setRowCount(0);
-        // Foods first
+        // Makanan dulu, diurutkan harga (sudah di-sort di OrderDisplay)
         for (Order o : orderDisplay.getFoods()) {
             cartModel.addRow(new Object[]{
                 o.getMenuItem().getKode(),
@@ -921,7 +873,7 @@ public class KohiSopGUI extends JFrame {
                 String.format("Rp %.0f", o.getSubtotal())
             });
         }
-        // Then drinks
+        // Lalu minuman
         for (Order o : orderDisplay.getDrinks()) {
             cartModel.addRow(new Object[]{
                 o.getMenuItem().getKode(),
@@ -1121,15 +1073,12 @@ public class KohiSopGUI extends JFrame {
         tabs.setBorder(null);
     }
 
-    // ─── Entry point ──────────────────────────────────────────────────────────
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            // Try system look and feel, fall back to Metal
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
             } catch (Exception ignored) {}
 
-            // Global UI defaults for dark theme
             UIManager.put("TabbedPane.background",          C_PANEL);
             UIManager.put("TabbedPane.foreground",          C_TEXT);
             UIManager.put("TabbedPane.selected",            C_CARD);
