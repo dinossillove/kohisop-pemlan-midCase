@@ -10,15 +10,19 @@ public class ReceiptPrinter {
     private PaymentCalculator calc;
     private Membership membership;
     private int pointsUsed;
+    private int pointsBefore;
+    private int pointsEarned;
 
     public ReceiptPrinter(PaymentCalculator calc) {
-        this(calc, null, 0);
+        this(calc, null, 0, 0, 0);
     }
 
-    public ReceiptPrinter(PaymentCalculator calc, Membership membership, int pointsUsed) {
+    public ReceiptPrinter(PaymentCalculator calc, Membership membership, int pointsUsed, int pointsBefore, int pointsEarned) {
         this.calc = calc;
         this.membership = membership;
         this.pointsUsed = pointsUsed;
+        this.pointsBefore = pointsBefore;
+        this.pointsEarned = pointsEarned;
     }
     
     public void printHeader() {
@@ -47,18 +51,19 @@ public class ReceiptPrinter {
         System.out.printf("Diskon (%-6s)      : -%.2f %s\n", ch.getName(), (subtotal + tax) * ch.getDiscount(), curr.getCode());
         if (ch.getAdminFee() > 0) System.out.printf("Biaya Admin           : +%.2f %s\n", curr.convertFromIDR(ch.getAdminFee()), curr.getCode());
         System.out.println("---------------------------------------------");
-        System.out.printf("TOTAL TAGIHAN AKHIR   : %.2f %s\n", calc.getFinalTotalInCurrency(), curr.getCode());
         if (membership != null) {
             System.out.println("=============================================");
-            System.out.println("Membership berhasil disimpan:");
+            System.out.println("Membership:");
             System.out.printf("Kode Member          : %s\n", membership.getKodeMember());
             System.out.printf("Nama Member          : %s\n", membership.getNamaMember());
-            System.out.printf("Poin Digunakan       : %d\n", pointsUsed);
-            System.out.printf("Nilai Poin           : %.2f IDR\n", pointsUsed * 2.0);
-            System.out.printf("Sisa Poin            : %d\n", membership.getPoin());
+            System.out.printf("Poin Sebelum         : %d\n", pointsBefore);
+            System.out.printf("Poin Digunakan       : %d (= %.2f IDR)\n", pointsUsed, pointsUsed * 2.0);
+            System.out.printf("Poin Didapat         : %d%s\n", pointsEarned, membership.hasCodeWithA() ? " (x2 bonus kode A)" : "");
+            System.out.printf("Poin Setelah         : %d\n", membership.getPoin());
         }
+        System.out.printf("TOTAL TAGIHAN AKHIR   : %.2f %s\n", calc.getFinalTotalInCurrency(), curr.getCode());
         System.out.println("=============================================");
-        System.out.println("      Terima kasih telah berbelanja di Kohisop!      ");
+        System.out.println("      Terima kasih dan silakan datang kembali!      ");
         System.out.println("=============================================");
     }
 }

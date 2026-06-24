@@ -60,7 +60,7 @@ public class Membership {
 
     private static int calculatePoints(double totalIDR) {
         long roundedTotal = Math.round(totalIDR);
-        return (roundedTotal % 10 == 0) ? 1 : 0;
+        return (int) (roundedTotal / 10);
     }
 
     public int redeemPoints(double amountIDR) {
@@ -73,8 +73,17 @@ public class Membership {
         return pointsToUse;
     }
 
+    public boolean hasCodeWithA() {
+        return kodeMember.contains("A");
+    }
+
+    public int getEarnedPointsWithBonus(double totalIDR) {
+        int base = calculatePoints(totalIDR);
+        return hasCodeWithA() ? base * 2 : base;
+    }
+
     public void addPointsFromTransaction(double totalIDR) {
-        int earnedPoints = calculatePoints(totalIDR);
+        int earnedPoints = getEarnedPointsWithBonus(totalIDR);
         if (earnedPoints > 0) {
             poin += earnedPoints;
         }
@@ -89,7 +98,7 @@ public class Membership {
     }
 
     public int getEarnedPointsForTransaction(double totalIDR) {
-        return calculatePoints(totalIDR);
+        return getEarnedPointsWithBonus(totalIDR);
     }
 
     private static String generateUniqueCode() {
@@ -119,9 +128,5 @@ public class Membership {
 
     public int getPoin() {
         return poin;
-    }
-
-    public boolean hasBonus() {
-    return kodeMember.contains("A");
     }
 }
